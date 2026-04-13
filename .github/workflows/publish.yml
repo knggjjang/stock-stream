@@ -53,6 +53,6 @@ jobs:
           tagName: v__VERSION__ # tauri-action will replace __VERSION__ with the version in package.json
           releaseName: "StockStream v__VERSION__"
           releaseBody: "See the assets below to download the latest version for your platform."
-          releaseDraft: true
+          releaseDraft: false
           prerelease: false
           args: ${{ matrix.args }}
