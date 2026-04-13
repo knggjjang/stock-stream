@@ -6,6 +6,20 @@
     "main"
   ],
   "permissions": [
-    "core:default"
+    "core:default",
+    "core:tray:default",
+    "core:menu:default",
+    "opener:default",
+    "http:default",
+    "http:allow-fetch",
+    "shell:default",
+    {
+      "identifier": "http:allow-fetch",
+      "allow": [
+        { "url": "https://query1.finance.yahoo.com/*" },
+        { "url": "https://query2.finance.yahoo.com/*" },
+        { "url": "https://polling.finance.naver.com/*" }
+      ]
+    }
   ]
 }
