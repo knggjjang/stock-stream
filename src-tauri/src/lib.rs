@@ -25,7 +25,8 @@ async fn fetch_stock_data_rust(url: String) -> Result<String, String> {
 #[tauri::command]
 fn update_tray_title<R: Runtime>(app: tauri::AppHandle<R>, title: String) {
     if let Some(tray) = app.tray_by_id("main-tray") {
-        let _ = tray.set_title(Some(title));
+        let _ = tray.set_title(Some(title.clone())); // macOS용
+        let _ = tray.set_tooltip(Some(title));       // Windows/Linux용 (마우스 호버 시 표시)
     }
 }
 
