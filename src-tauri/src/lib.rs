@@ -6,6 +6,12 @@ use tauri::{
 
 #[tauri::command]
 async fn fetch_stock_data_rust(url: String) -> Result<String, String> {
+    // 보안 검증 (SSRF 방어): 허용된 네이버 금융 도메인만 허용
+    if !url.starts_with("https://polling.finance.naver.com/") && 
+       !url.starts_with("https://finance.naver.com/") {
+        return Err("Unauthorized URL requested".to_string());
+    }
+
     let client = reqwest::Client::builder()
         .user_agent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
         .build()

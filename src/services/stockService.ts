@@ -9,18 +9,32 @@ export interface StockInfo {
   lastUpdated: number;
 }
 
+export interface NaverStockItem {
+  cd: string;
+  nm?: string;
+  nv?: string | number;
+  rf?: string | number;
+  cv?: string | number;
+  cr?: string | number;
+  clos?: string;
+  diff?: string;
+  rate?: string;
+}
+
 export async function fetchStockDataBatch(tickers: string[]) {
-  if (tickers.length === 0) return {};
+  // 입력값 화이트리스트 검증 (영문, 숫자, @ 기호만 허용)
+  const validTickers = tickers.filter(t => /^[a-zA-Z0-9@]+$/.test(t));
+  if (validTickers.length === 0) return {};
   
   try {
-    const url = `https://polling.finance.naver.com/api/realtime?query=SERVICE_ITEM:${tickers.join(',')}`;
+    const url = `https://polling.finance.naver.com/api/realtime?query=SERVICE_ITEM:${validTickers.join(',')}`;
     const jsonStr: string = await invoke('fetch_stock_data_rust', { url });
     const data = JSON.parse(jsonStr);
     
     const results = data.result?.areas?.[0]?.datas || [];
     
     const stockData: Record<string, StockInfo> = {};
-    results.forEach((item: any) => {
+    results.forEach((item: NaverStockItem) => {
       const ticker = item.cd;
       const price = parseFloat(item.nv?.toString() || '0');
       const rf = item.rf?.toString(); // 1:상한, 2:상승, 3:보합, 4:하락, 5:하한
@@ -65,7 +79,7 @@ export async function fetchMarketIndices() {
     
     const results = data.result?.areas?.[0]?.datas || [];
     
-    results.forEach((item: any) => {
+    results.forEach((item: NaverStockItem) => {
       const ticker = item.cd;
       // Domestic indices in Polling API are multiplied by 100
       const price = parseFloat(item.nv?.toString() || '0') / 100;
